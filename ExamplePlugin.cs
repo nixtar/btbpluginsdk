@@ -5,8 +5,8 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace btbplugin
 {
-    public class btbCommand:ICommand
-    {
+   public class btbCommand : ICommand
+   {
       private int count = 1;
       public string Name
       {
@@ -24,7 +24,8 @@ namespace btbplugin
          }
       }
 
-      public string[] Command {
+      public string[] Command
+      {
          get
          {
             string[] commands = { "!Example" };
