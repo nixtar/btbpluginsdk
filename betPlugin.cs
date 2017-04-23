@@ -1,4 +1,4 @@
-﻿// namespace btbcomm
+// namespace btbcomm
 // {
 //   public interface ICommand
 //   {
@@ -49,7 +49,7 @@ namespace btbplugin
          get
          {
             return "While a bet is under way type '!Bet {Choice} {Points}'... " +
-            "EG: '!Bet No 1337'..." +
+            "EG: '!Bet Yes 1337'..." +
             "Type '!Bet' to show if a bet is currently underway..." +
             "Author: Nixtar " +
             "Version: 0.0.1";
@@ -106,6 +106,10 @@ namespace btbplugin
                return false;
             }
          }
+         else
+         {
+            return True;
+         }
       }
 
       public bool Execute(out string message, btb.User usr, string[] args)
@@ -119,19 +123,90 @@ namespace btbplugin
             }
             else
             {
-               message = "Bet Details: " betMessage + " " + "Options: " + betOptions;
+               message = "Bet Details: " betMessage + " " + "Options: " + string.Join(", ", betOptions);
             }
          }
 
-         if (args[0].Equals("Create"))
+         if (args.length == 2)
+         {
+            if (betStatus == 1)
+            {
+               if(betOptions.Contains(args[0]))
+               {
+                  //TODO Do something with the users Choice value..
+               }
+               else
+               {
+                  message = "Invalid option, please choose from the following options: " + string.Join(", ", betOptions);
+               }
+
+               if(int.TryParse(args[1], out value))
+               {
+                  //TODO Do something with the users bet value..
+               }
+            }
+            else
+            {
+               message = "Sorry, There is currently no bets running...";
+            }
+
+         }
+
+         if (args[0].Equals("Create")) 
          {
             string betMessage = args[0];
-            string[] betOptions 
+            List<string> betOptions = new List<string>();
+            //Set the max bet
+            string maxArg = "max=";
+            int maxPos = Array.IndexOf(args, maxArg);
+            if (maxPos > -1)
+            {
+               int maxBet = UInt32.Parse(args[maxPos].split('=')[1]);
+            }
+
+            //Set the min bet
+            string minArg = "min=";
+            int minPos = Array.IndexOf(args, minArg);
+            if (minPos > -1)
+            {
+               int minBet = UInt32.Parse(args[minPos].split('=')[1]);
+            }
+            foreach (var arg in args)
+            {
+               if (arg == args[0]) continue;
+
+               string maxBet = arg.Where(str => str.Contains("max=*"));
+               if (maxBet = null) 
+               {
+               continue;
+               }
+               else
+               {
+                  int maxBet = UInt32.Parse(maxBet.split('=')[1]);
+                  continue;
+               }
+
+               string minBet = arg.Where(str => str.Contains("min=*"));
+               if (minBet = null) 
+               {
+               continue;
+               }
+               else
+               {
+                  int minBet = UInt32.Parse(minBet.split('=')[1]);
+                  continue;
+               }
+               betOptions.add(arg)
+            }
+            private int betStatus = 1;
          }
 
          if (args[0].Equals("Finish"))
          {
-            //TODO get the result and pay the winners
+            if (betStatus == 0)
+            {
+               message = "Sorry, There is currently no bets running...";
+            }
          }
          message = usr.displayName + ": Here is an example response, you have " + usr.points + "points.";
          message += "This command has been ran a total of " + count++ + " times.";
