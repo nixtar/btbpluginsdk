@@ -109,8 +109,9 @@ namespace btbplugin
          }
 
          if (betStatus == 1)
-         {
-            if (betOptions.Contains(args[0]) && (args.Length < 2) && (Double.TryParse(args[1], 0)))
+         {  
+            string derp = "";
+            if (betOptions.Contains(args[0]) && (args.Length < 2) && (UInt32.TryParse(args[1], derp)))
             {
                return PluginResponse.Accept;
             }
@@ -154,8 +155,7 @@ namespace btbplugin
                }
 
                int value = 0;
-
-               if (int.TryParse(args[1], out value))
+               if (UInt32.TryParse(args[1], out value))
                {
                   //TODO Do something with the users bet value..
                }
@@ -208,7 +208,7 @@ namespace btbplugin
             betStatus = 1;
          }
 
-         if (args[0].Equals("Finish"))
+         if (args[0].Equals("end"))
          {
             if (betStatus == 0)
             {
