@@ -30,6 +30,7 @@ using System.IO;
 using btbcomm;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace btbplugin
 {
@@ -40,8 +41,8 @@ namespace btbplugin
       private int betStatus = 0;
       private string betMessage = "";
       private List<string> betOptions = new List<string>();
-      private int maxBet = "";
-      private int minBet = "";
+      private uint maxBet = 0;
+      private uint minBet = 0;
 
       public string Name
       {
@@ -72,57 +73,63 @@ namespace btbplugin
          }
       }
 
-      private bool CheckPointsRespond(btb.User usr, UInt32 pointsNeeded, out string message)
+      private bool CheckPointsRespond(User usr, UInt32 pointsNeeded, out string message)
       {
          if (usr.points < pointsNeeded)
          {
             message = usr.displayName + ": You don't have enough points to do that. You have only " + usr.points + "points.";
             return false;
          }
+         message = "";
          return true;
       }
 
 
-      public bool CheckParameters(string[] args)
+      public PluginResponse ValidateParameters(string[] args)
       {
+         if (args.Length == 0)
+         {
+            PluginResponse.Accept;
+         }
          if (args[0].Equals("create"))
             {
-               if (args.length < 3)
+               if (args.Length < 3)
                {
-                  return false;
+                  return PluginResponse.Reject;
                }
                else
                {
-                  return true;
+                  return PluginResponse.Accept;
                }
             }
 
          if (args[0].Equals("end"))
          {
-            return true;
+            return PluginResponse.Accept;
          }
 
          if (betStatus == 1)
-         {
-            if (betOptions.Contains(args[0]) & (args.length < 2) & (Double.TryParse(args[1], 0)))
+         {  
+            string derp = "";
+            if (betOptions.Contains(args[0]) && (args.Length < 2) && (UInt32.TryParse(args[1], derp)))
             {
-               return true;
+               return PluginResponse.Accept;
             }
             else
             {
-               return false;
+               return PluginResponse.Help;
             }
          }
          else
          {
-            return True;
+            return PluginResponse.Accept;
          }
       }
 
-      public bool Execute(out string message, btb.User usr, string[] args)
+      public bool Execute(out string message, User usr, string[] args)
       {
 
-         if (args.length == 0)
+         if (args.Length == 0)
          {
             if (betStatus == 0)
             {
@@ -134,22 +141,29 @@ namespace btbplugin
             }
          }
 
-         if (args.length == 2)
+         if (args.Length == 2)
          {
             if (betStatus == 1)
             {
-               if(betOptions.Contains(args[0]))
+               if (betOptions.Contains(args[0]))
                {
                   //TODO Do something with the users Choice value..
                }
                else
                {
                   message = "Invalid option, please choose from the following options: " + string.Join(", ", betOptions);
+                  continue;
                }
 
-               if(int.TryParse(args[1], out value))
+               int value = 0;
+               if (UInt32.TryParse(args[1], out value))
                {
                   //TODO Do something with the users bet value..
+               }
+               else
+               {
+                  message = "Invalid points option, please type the command as '!Bet {Choice} {Points}'";
+                  continue;
                }
             }
             else
@@ -161,23 +175,13 @@ namespace btbplugin
 
          if (args[0].Equals("Create")) 
          {
+            if (usr.admin = false)
+            {
+               message = "Sorry, This is a Mod only command...";
+               continue;
+            }
+
             betMessage = args[0];
-
-            // //Set the max bet
-            // string maxArg = "max=";
-            // int maxPos = Array.IndexOf(args, maxArg);
-            // if (maxPos > -1)
-            // {
-            //    int maxBet = UInt32.Parse(args[maxPos].split('=')[1]);
-            // }
-
-            // //Set the min bet
-            // string minArg = "min=";
-            // int minPos = Array.IndexOf(args, minArg);
-            // if (minPos > -1)
-            // {
-            //    int minBet = UInt32.Parse(args[minPos].split('=')[1]);
-            // }
 
             foreach (var arg in args)
             {
@@ -185,30 +189,39 @@ namespace btbplugin
 
                if (arg.StartsWith("max="))
                {
-                  maxBet = UInt32.Parse(arg.split('=')[1]); //Set the max bet
+                  maxBet = UInt32.Parse(arg.Split('=')[1]); //Set the max bet
                   continue;
                }
 
                if (arg.StartsWith("min="))
                {
-                  minBet = UInt32.Parse(arg.split('=')[1]); //Set the max bet
+                  minBet = UInt32.Parse(arg.Split('=')[1]); //Set the max bet
                   continue;
                }
 
-               betOptions.add(arg);
+               betOptions.Add(arg);
             }
             betStatus = 1;
          }
 
-         if (args[0].Equals("Finish"))
+         if (args[0].Equals("end"))
          {
+            if (usr.admin = false)
+            {
+               message = "Sorry, This is a Mod only command...";
+               continue;
+            }
             if (betStatus == 0)
             {
                message = "Sorry, There is currently no bets running...";
             }
+            else
+            {
+               message = "Betting has finished..."
+               //TODO actually do something when the bet has completed
+               betStatus = 0
+            }
          }
-         message = usr.displayName + ": Here is an example response, you have " + usr.points + "points.";
-         message += "This command has been ran a total of " + count++ + " times.";
          return true;
       }
 
