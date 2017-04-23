@@ -89,7 +89,7 @@ namespace btbplugin
       {
          if (args.Length == 0)
          {
-            PluginResponse.Accept;
+            return PluginResponse.Accept;
          }
          if (args[0].Equals("create"))
             {
@@ -110,7 +110,7 @@ namespace btbplugin
 
          if (betStatus == 1)
          {  
-            string derp = "";
+            UInt32 derp;
             if (betOptions.Contains(args[0]) && (args.Length < 2) && (UInt32.TryParse(args[1], derp)))
             {
                return PluginResponse.Accept;
@@ -152,10 +152,10 @@ namespace btbplugin
                else
                {
                   message = "Invalid option, please choose from the following options: " + string.Join(", ", betOptions);
-                  continue;
+                  return false;
                }
 
-               int value = 0;
+               UInt32 value;
                if (UInt32.TryParse(args[1], out value))
                {
                   //TODO Do something with the users bet value..
@@ -163,7 +163,7 @@ namespace btbplugin
                else
                {
                   message = "Invalid points option, please type the command as '!Bet {Choice} {Points}'";
-                  continue;
+                  return false;
                }
             }
             else
@@ -175,7 +175,7 @@ namespace btbplugin
 
          if (args[0].Equals("Create")) 
          {
-            if (usr.admin = false)
+            if (usr.admin == false)
             {
                message = "Sorry, This is a Mod only command...";
                continue;
@@ -206,7 +206,7 @@ namespace btbplugin
 
          if (args[0].Equals("end"))
          {
-            if (usr.admin = false)
+            if (usr.admin == false)
             {
                message = "Sorry, This is a Mod only command...";
                continue;
@@ -217,9 +217,9 @@ namespace btbplugin
             }
             else
             {
-               message = "Betting has finished..."
+               message = "Betting has finished...";
                //TODO actually do something when the bet has completed
-               betStatus = 0
+               betStatus = 0;
             }
          }
          return true;
