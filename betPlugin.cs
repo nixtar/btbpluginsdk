@@ -152,12 +152,18 @@ namespace btbplugin
                else
                {
                   message = "Invalid option, please choose from the following options: " + string.Join(", ", betOptions);
+                  continue;
                }
 
                int value = 0;
                if (UInt32.TryParse(args[1], out value))
                {
                   //TODO Do something with the users bet value..
+               }
+               else
+               {
+                  message = "Invalid points option, please type the command as '!Bet {Choice} {Points}'";
+                  continue;
                }
             }
             else
@@ -169,23 +175,13 @@ namespace btbplugin
 
          if (args[0].Equals("Create")) 
          {
+            if (usr.admin = false)
+            {
+               message = "Sorry, This is a Mod only command...";
+               continue;
+            }
+
             betMessage = args[0];
-
-            // //Set the max bet
-            // string maxArg = "max=";
-            // int maxPos = Array.IndexOf(args, maxArg);
-            // if (maxPos > -1)
-            // {
-            //    int maxBet = UInt32.Parse(args[maxPos].split('=')[1]);
-            // }
-
-            // //Set the min bet
-            // string minArg = "min=";
-            // int minPos = Array.IndexOf(args, minArg);
-            // if (minPos > -1)
-            // {
-            //    int minBet = UInt32.Parse(args[minPos].split('=')[1]);
-            // }
 
             foreach (var arg in args)
             {
@@ -210,13 +206,22 @@ namespace btbplugin
 
          if (args[0].Equals("end"))
          {
+            if (usr.admin = false)
+            {
+               message = "Sorry, This is a Mod only command...";
+               continue;
+            }
             if (betStatus == 0)
             {
                message = "Sorry, There is currently no bets running...";
             }
+            else
+            {
+               message = "Betting has finished..."
+               //TODO actually do something when the bet has completed
+               betStatus = 0
+            }
          }
-         message = usr.displayName + ": Here is an example response, you have " + usr.points + "points.";
-         message += "This command has been ran a total of " + count++ + " times.";
          return true;
       }
 
