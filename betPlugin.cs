@@ -29,13 +29,20 @@ using System;
 using System.IO;
 using btbcomm;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Linq;
 
 namespace btbplugin
 {
+   [Serializable()]
    public class betPluginCommand : ICommand
    {
       private int count = 1;
       private int betStatus = 0;
+      private string betMessage = "";
+      private List<string> betOptions = new List<string>();
+      private int maxBet = "";
+      private int minBet = "";
+
       public string Name
       {
          get
@@ -60,7 +67,7 @@ namespace btbplugin
       {
          get
          {
-            string[] commands = { "!Bet" };
+            string[] commands = { "!bet" };
             return commands;
          }
       }
@@ -78,7 +85,7 @@ namespace btbplugin
 
       public bool CheckParameters(string[] args)
       {
-         if (args[0].Equals("Create"))
+         if (args[0].Equals("create"))
             {
                if (args.length < 3)
                {
@@ -90,7 +97,7 @@ namespace btbplugin
                }
             }
 
-         if (args[0].Equals("End"))
+         if (args[0].Equals("end"))
          {
             return true;
          }
@@ -123,7 +130,7 @@ namespace btbplugin
             }
             else
             {
-               message = "Bet Details: " betMessage + " " + "Options: " + string.Join(", ", betOptions);
+               message = "Bet Details: " + betMessage + " Options: " + string.Join(", ", betOptions);
             }
          }
 
@@ -154,35 +161,36 @@ namespace btbplugin
 
          if (args[0].Equals("Create")) 
          {
-            string betMessage = args[0];
-            List<string> betOptions = new List<string>();
-            //Set the max bet
-            string maxArg = "max=";
-            int maxPos = Array.IndexOf(args, maxArg);
-            if (maxPos > -1)
-            {
-               int maxBet = UInt32.Parse(args[maxPos].split('=')[1]);
-            }
+            betMessage = args[0];
 
-            //Set the min bet
-            string minArg = "min=";
-            int minPos = Array.IndexOf(args, minArg);
-            if (minPos > -1)
-            {
-               int minBet = UInt32.Parse(args[minPos].split('=')[1]);
-            }
+            // //Set the max bet
+            // string maxArg = "max=";
+            // int maxPos = Array.IndexOf(args, maxArg);
+            // if (maxPos > -1)
+            // {
+            //    int maxBet = UInt32.Parse(args[maxPos].split('=')[1]);
+            // }
+
+            // //Set the min bet
+            // string minArg = "min=";
+            // int minPos = Array.IndexOf(args, minArg);
+            // if (minPos > -1)
+            // {
+            //    int minBet = UInt32.Parse(args[minPos].split('=')[1]);
+            // }
+
             foreach (var arg in args)
             {
                if (arg == args[0]) continue;
 
-               string maxBet = arg.Where(str => str.Contains("max=*"));
-               if (maxBet = null) 
+               maxBet = arg.Where(str => str.StartsWith("max="));
+               if (maxBet = null)
                {
                continue;
                }
                else
                {
-                  int maxBet = UInt32.Parse(maxBet.split('=')[1]);
+                  int maxBet = UInt32.Parse(maxBet.split('=')[1]); //Set the max bet
                   continue;
                }
 
@@ -193,12 +201,12 @@ namespace btbplugin
                }
                else
                {
-                  int minBet = UInt32.Parse(minBet.split('=')[1]);
+                  int minBet = UInt32.Parse(minBet.split('=')[1]); //Set the min bet
                   continue;
                }
-               betOptions.add(arg)
+               betOptions.add(arg);
             }
-            private int betStatus = 1;
+            betStatus = 1;
          }
 
          if (args[0].Equals("Finish"))
