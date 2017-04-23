@@ -30,6 +30,7 @@ using System.IO;
 using btbcomm;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace btbplugin
 {
@@ -40,8 +41,8 @@ namespace btbplugin
       private int betStatus = 0;
       private string betMessage = "";
       private List<string> betOptions = new List<string>();
-      private int maxBet = "";
-      private int minBet = "";
+      private uint maxBet = 0;
+      private uint minBet = 0;
 
       public string Name
       {
@@ -72,57 +73,58 @@ namespace btbplugin
          }
       }
 
-      private bool CheckPointsRespond(btb.User usr, UInt32 pointsNeeded, out string message)
+      private bool CheckPointsRespond(User usr, UInt32 pointsNeeded, out string message)
       {
          if (usr.points < pointsNeeded)
          {
             message = usr.displayName + ": You don't have enough points to do that. You have only " + usr.points + "points.";
             return false;
          }
+         message = "";
          return true;
       }
 
 
-      public bool CheckParameters(string[] args)
+      public PluginResponse ValidateParameters(string[] args)
       {
          if (args[0].Equals("create"))
             {
-               if (args.length < 3)
+               if (args.Length < 3)
                {
-                  return false;
+                  return PluginResponse.Reject;
                }
                else
                {
-                  return true;
+                  return PluginResponse.Accept;
                }
             }
 
          if (args[0].Equals("end"))
          {
-            return true;
+            return PluginResponse.Accept;
          }
 
          if (betStatus == 1)
          {
-            if (betOptions.Contains(args[0]) & (args.length < 2) & (Double.TryParse(args[1], 0)))
+            if (betOptions.Contains(args[0]) & (args.Length < 2) & (Double.TryParse(args[1], 0)))
             {
-               return true;
+               return PluginResponse.Accept;
             }
             else
             {
-               return false;
+               return PluginResponse.Help;
             }
          }
          else
          {
-            return True;
+            return PluginResponse.Accept;
          }
       }
 
-      public bool Execute(out string message, btb.User usr, string[] args)
+      public bool Execute(out string message, User usr, string[] args)
       {
 
-         if (args.length == 0)
+         if (args.Length == 0)
          {
             if (betStatus == 0)
             {
@@ -134,11 +136,11 @@ namespace btbplugin
             }
          }
 
-         if (args.length == 2)
+         if (args.Length == 2)
          {
             if (betStatus == 1)
             {
-               if(betOptions.Contains(args[0]))
+               if (betOptions.Contains(args[0]))
                {
                   //TODO Do something with the users Choice value..
                }
@@ -147,7 +149,9 @@ namespace btbplugin
                   message = "Invalid option, please choose from the following options: " + string.Join(", ", betOptions);
                }
 
-               if(int.TryParse(args[1], out value))
+               int value = 0;
+
+               if (int.TryParse(args[1], out value))
                {
                   //TODO Do something with the users bet value..
                }
@@ -185,17 +189,17 @@ namespace btbplugin
 
                if (arg.StartsWith("max="))
                {
-                  maxBet = UInt32.Parse(arg.split('=')[1]); //Set the max bet
+                  maxBet = UInt32.Parse(arg.Split('=')[1]); //Set the max bet
                   continue;
                }
 
                if (arg.StartsWith("min="))
                {
-                  minBet = UInt32.Parse(arg.split('=')[1]); //Set the max bet
+                  minBet = UInt32.Parse(arg.Split('=')[1]); //Set the max bet
                   continue;
                }
 
-               betOptions.add(arg);
+               betOptions.Add(arg);
             }
             betStatus = 1;
          }
