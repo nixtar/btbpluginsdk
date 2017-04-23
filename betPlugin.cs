@@ -111,7 +111,7 @@ namespace btbplugin
          if (betStatus == 1)
          {  
             UInt32 derp;
-            if (betOptions.Contains(args[0]) && (args.Length < 2) && (UInt32.TryParse(args[1], derp)))
+            if (betOptions.Contains(args[0]) && (args.Length < 2) && (UInt32.TryParse(args[1], out derp)))
             {
                return PluginResponse.Accept;
             }
@@ -128,7 +128,7 @@ namespace btbplugin
 
       public bool Execute(out string message, User usr, string[] args)
       {
-
+         message = "How did this happen??";
          if (args.Length == 0)
          {
             if (betStatus == 0)
@@ -178,7 +178,7 @@ namespace btbplugin
             if (usr.admin == false)
             {
                message = "Sorry, This is a Mod only command...";
-               continue;
+               return false;
             }
 
             betMessage = args[0];
@@ -209,7 +209,7 @@ namespace btbplugin
             if (usr.admin == false)
             {
                message = "Sorry, This is a Mod only command...";
-               continue;
+               return false;
             }
             if (betStatus == 0)
             {
