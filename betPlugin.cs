@@ -140,8 +140,7 @@ namespace btbplugin
                message = "Bet Details: " + betMessage + " Options: " + string.Join(", ", betOptions);
             }
          }
-
-         if (args.Length == 2)
+         else if (args.Length == 2)
          {
             if (betStatus == 1)
             {
@@ -172,8 +171,7 @@ namespace btbplugin
             }
 
          }
-
-         if (args[0].Equals("Create")) 
+         else if (args[0].Equals("create")) 
          {
             if (usr.admin == false)
             {
@@ -181,10 +179,11 @@ namespace btbplugin
                return false;
             }
 
-            betMessage = args[0];
+            betMessage = args[1];
 
-            foreach (var arg in args)
+            for (int i = 2; i < args.Length; i++)
             {
+               var arg = args[i];
                if (arg == args[0]) continue;
 
                if (arg.StartsWith("max="))
@@ -203,8 +202,7 @@ namespace btbplugin
             }
             betStatus = 1;
          }
-
-         if (args[0].Equals("end"))
+         else if (args[0].Equals("end"))
          {
             if (usr.admin == false)
             {
@@ -227,17 +225,11 @@ namespace btbplugin
 
       public byte[] Save()
       {
-         MemoryStream exampleStream = new MemoryStream();
-         BinaryFormatter serialiser = new BinaryFormatter();
-         serialiser.Serialize(exampleStream, this);
-         return exampleStream.GetBuffer();
+         return new byte[0];
       }
 
       public void Load(byte[] data)
       {
-         MemoryStream exampleStream = new MemoryStream(data, false);
-         BinaryFormatter deserialiser = new BinaryFormatter();
-         count = (deserialiser.Deserialize(exampleStream) as betPluginCommand).count;
       }
    }
 }
