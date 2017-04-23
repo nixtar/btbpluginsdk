@@ -41,8 +41,10 @@ namespace btbplugin
       private int betStatus = 0;
       private string betMessage = "";
       private List<string> betOptions = new List<string>();
-      private uint maxBet = 0;
-      private uint minBet = 0;
+      private UInt32 maxBet = 0;
+      private UInt32 minBet = 1;
+      private UInt32 betUsrPoints = 0;
+      private string betUsrOption = "";
 
       public string Name
       {
@@ -87,6 +89,9 @@ namespace btbplugin
 
       public PluginResponse ValidateParameters(string[] args)
       {
+         if (args[0].Equals("help"))
+            return PluginResponse.Help;
+
          if (args.Length == 0)
          {
             return PluginResponse.Accept;
@@ -111,7 +116,7 @@ namespace btbplugin
          if (betStatus == 1)
          {  
             UInt32 derp;
-            if (betOptions.Contains(args[0]) && (args.Length < 2) && (UInt32.TryParse(args[1], out derp)))
+            if (betOptions.Contains(args[0]) && (args.Length == 2) && (UInt32.TryParse(args[1], out derp)))
             {
                return PluginResponse.Accept;
             }
@@ -146,7 +151,7 @@ namespace btbplugin
             {
                if (betOptions.Contains(args[0]))
                {
-                  //TODO Do something with the users Choice value..
+                  betUsrOption = args[0]
                }
                else
                {
@@ -154,15 +159,15 @@ namespace btbplugin
                   return false;
                }
 
-               UInt32 value;
-               if (UInt32.TryParse(args[1], out value))
+               UInt32 betUsrPoints;
+               UInt32.Parse(args[1], out betUsrPoints)
+               if (betUsrPoints >= minBet) && (betUsrPoints <= maxBet)
                {
-                  //TODO Do something with the users bet value..
+                  message = "Congrats, you are betting " + betUsrOption + " against " + betMessage " with on " + betUsrPoints + " Points!";
                }
                else
                {
-                  message = "Invalid points option, please type the command as '!Bet {Choice} {Points}'";
-                  return false;
+                  message = "Sorry, please make sure your bet is within the current limits (Min Bet=" +  minBet + " Max Bet=" + maxBet + ")";
                }
             }
             else
@@ -180,7 +185,7 @@ namespace btbplugin
             }
 
             betMessage = args[1];
-
+            betOptions = new List<string>();
             for (int i = 2; i < args.Length; i++)
             {
                var arg = args[i];
@@ -201,6 +206,7 @@ namespace btbplugin
                betOptions.Add(arg);
             }
             betStatus = 1;
+            message = "A bet has started, '" + betMessage + "' with options: " + string.Join(", ", betOptions);
          }
          else if (args[0].Equals("end"))
          {
