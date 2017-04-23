@@ -87,6 +87,10 @@ namespace btbplugin
 
       public PluginResponse ValidateParameters(string[] args)
       {
+         if (args.Length == 0)
+         {
+            PluginResponse.Accept;
+         }
          if (args[0].Equals("create"))
             {
                if (args.Length < 3)
@@ -106,7 +110,7 @@ namespace btbplugin
 
          if (betStatus == 1)
          {
-            if (betOptions.Contains(args[0]) & (args.Length < 2) & (Double.TryParse(args[1], 0)))
+            if (betOptions.Contains(args[0]) && (args.Length < 2) && (Double.TryParse(args[1], 0)))
             {
                return PluginResponse.Accept;
             }
