@@ -183,27 +183,18 @@ namespace btbplugin
             {
                if (arg == args[0]) continue;
 
-               maxBet = arg.Where(str => str.StartsWith("max="));
-               if (maxBet = null)
+               if (arg.StartsWith("max="))
                {
-               continue;
-               }
-               else
-               {
-                  int maxBet = UInt32.Parse(maxBet.split('=')[1]); //Set the max bet
+                  maxBet = UInt32.Parse(arg.split('=')[1]); //Set the max bet
                   continue;
                }
 
-               string minBet = arg.Where(str => str.Contains("min=*"));
-               if (minBet = null) 
+               if (arg.StartsWith("min="))
                {
-               continue;
-               }
-               else
-               {
-                  int minBet = UInt32.Parse(minBet.split('=')[1]); //Set the min bet
+                  minBet = UInt32.Parse(arg.split('=')[1]); //Set the max bet
                   continue;
                }
+
                betOptions.add(arg);
             }
             betStatus = 1;
