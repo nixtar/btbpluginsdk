@@ -151,7 +151,7 @@ namespace btbplugin
             {
                if (betOptions.Contains(args[0]))
                {
-                  betUsrOption = args[0]
+                  betUsrOption = args[0];
                }
                else
                {
@@ -160,10 +160,10 @@ namespace btbplugin
                }
 
                UInt32 betUsrPoints;
-               UInt32.Parse(args[1], out betUsrPoints)
-               if (betUsrPoints >= minBet) && (betUsrPoints <= maxBet)
+               UInt32.Parse(args[1], out betUsrPoints);
+               if ((betUsrPoints >= minBet) && (betUsrPoints <= maxBet))
                {
-                  message = "Congrats, you are betting " + betUsrOption + " against " + betMessage " with on " + betUsrPoints + " Points!";
+                  message = "Congrats, you are betting " + betUsrOption + " against " + betMessage + " with on " + betUsrPoints + " Points!";
                }
                else
                {
