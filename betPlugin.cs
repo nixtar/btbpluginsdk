@@ -87,7 +87,7 @@ namespace btbplugin
       }
 
 
-      public PluginResponse ValidateParameters(string[] args)
+      public PluginResponse ValidateParameters(string command, string[] args)
       {
          if (args[0].Equals("help"))
             return PluginResponse.Help;
@@ -131,7 +131,7 @@ namespace btbplugin
          }
       }
 
-      public bool Execute(out string message, User usr, string[] args)
+      public bool Execute(out string message, string command, User usr, string[] args)
       {
          message = "How did this happen??";
          if (args.Length == 0)
@@ -234,7 +234,7 @@ namespace btbplugin
          return new byte[0];
       }
 
-      public void Load(byte[] data)
+      public void Load(byte[] data, IBtbInterface ignored)
       {
       }
    }
